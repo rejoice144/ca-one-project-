@@ -7,6 +7,7 @@ app.use("/users",rejoice);
 app.use(bodyParser.json());
 app.get('/', (req ,res)=> {
     res.send("hello rejoice");
+    
  });
 
 app.listen(PORT, () => console.log(`Server running on port: http://localhost:${PORT}`));
