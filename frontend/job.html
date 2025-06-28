@@ -77,7 +77,7 @@
         clientName: document.getElementById('clientName').value,
         description: document.getElementById('jobDescription').value,
         materials: document.getElementById('materials').value.split(',').map(m => m.trim()),
-        estimatedCost: parseFloat(document.getElementById('estimatedCost').value) || 0,
+        estimatedCost: parseFloat(document.getElementById('estimatedCost').value) || 'zero',
         status: document.getElementById('status').value,
         startDate: document.getElementById('startDate').value
     };
