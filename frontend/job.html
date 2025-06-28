@@ -94,7 +94,7 @@
             });
         } else {
             response = await fetch('/api/jobs', {
-                method: 'post',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(jobData)
             });
