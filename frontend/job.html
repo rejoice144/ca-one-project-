@@ -75,9 +75,9 @@
 
     const jobData = {
         clientName: document.getElementById('clientName').value,
-        description: document.getElementById('jobDescripton').value,
+        description: document.getElementById('jobDescription').value,
         materials: document.getElementById('materials').value.split(',').map(m => m.trim()),
-        estimatedCost: parseFloat(document.getElementById('estimatedCost').value) || 'zero',
+        estimatedCost: parseFloat(document.getElementById('estimatedCost').value) || 0,
         status: document.getElementById('status').value,
         startDate: document.getElementById('startDate').value
     };
