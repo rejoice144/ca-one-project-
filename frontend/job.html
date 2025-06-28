@@ -113,6 +113,41 @@
         alert('Error saving job');
     }
 });
+    async function loadJobs() {
+            try {
+                const response = await fetch('/api/jobs');
+                const jobs = await response.json();
+                
+                const jobsList = document.getElementById('jobsList');
+                jobsList.innerHTML = '';
+                
+                if (jobs.length === 0) {
+                    jobsList.innerHTML = '<p>No jobs found.</p>';
+                    return;
+                }
+                
+                jobs.forEach(job => {
+                    const jobDiv = document.createElement('div');
+                    jobDiv.className = 'item-card';
+                    jobDiv.innerHTML = `
+                        <h3>Job #${job.id}</h3>
+                        <p><strong>Client:</strong> ${job.clientName}</p>
+                        <p><strong>Description:</strong> ${job.description}</p>
+                        <p><strong>Materials:</strong> ${Array.isArray(job.materials) ? job.materials.join(', ') : job.materials}</p>
+                        <p><strong>Cost:</strong> $${job.estimatedCost}</p>
+                        <p><strong>Status:</strong> ${job.status}</p>
+                        <p><strong>Start Date:</strong> ${job.startDate}</p>
+                        <div class="actions">
+                            <button onclick="editJob(${job.id})">Edit</button>
+                            <button onclick="deleteJob(${job.id})" class="delete-btn">Delete</button>
+                        </div>
+                    `;
+                    jobsList.appendChild(jobDiv);
+                });
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+            }
+        }
     })
    
 
