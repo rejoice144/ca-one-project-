@@ -58,6 +58,62 @@
             <div class="list-section">
                 <h2>All Jobs</h2>
                 <div id="jobsList"></div>
+
             </div>
         </main>
     </div>
+    <script src="script.js"></script>
+<script>
+    // Load jobs when page loads
+    document.addEventListener('DOMContentLoaded', loadJobs);
+    
+    // Form submission
+    document.getElementById('jobForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        document.getElementById('jobForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const jobData = {
+        clientName: document.getElementById('clientName').value,
+        description: document.getElementById('jobDescripton').value,
+        materials: document.getElementById('materials').value.split(',').map(m => m.trim()),
+        estimatedCost: parseFloat(document.getElementById('estimatedCost').value) || 'zero',
+        status: document.getElementById('status').value,
+        startDate: document.getElementById('startDate').value
+    };
+
+    const jobId = document.getElementById('jobId').value;
+
+    try {
+        let response;
+        if (jobId) {
+            response = await fetch(`/api/jobs/${jobId}`, {
+                method: 'update',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jobData)
+            });
+        } else {
+            response = await fetch('/api/jobs', {
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jobData)
+            });
+        }
+
+        if (response.ok) {
+            document.getElementById('jobForm').reset();
+            document.getElementById('jobId').value = '';
+            document.getElementById('submitBtn').textContent = 'Add Job';
+            loadJobs();
+        } else {
+            alert('Error saving job');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error saving job');
+    }
+});
+    })
+   
+
+
