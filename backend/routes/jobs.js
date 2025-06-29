@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path')
 const router = express.Router();
 
-const dataPath = path.join(__dirname,'../data/jobs.json')
+const dataPath = path.join(__dirname,'../database/jobs.json')
 //helper function read job data
 function readjobs(){
         try{
@@ -35,7 +35,7 @@ router.get('/:id', (req, res) => {
   res.json(jobs);
 });
 // create a new job
-router.get('/',(req,res)=>{
+router.post('/',(req,res)=>{
   const jobs = readjobs();
   const newjob = {
     id:jobs.lenght > 0 ? Math.max(...jobs.map(j => j.id)) + 1 : 1,
