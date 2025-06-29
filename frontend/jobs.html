@@ -65,13 +65,12 @@
     <script src="script.js"></script>
 <script>
     // Load jobs when page loads
-    document.addEventListener('DOMContentLoaded', loadJobs);
+    document.addEventListener('DOMContentLoaded', () => {
+    loadJobs();
     
     // Form submission
     document.getElementById('jobForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        document.getElementById('jobForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
 
     const jobData = {
         clientName: document.getElementById('clientName').value,
@@ -113,6 +112,7 @@
         alert('Error saving job');
     }
 });
+    });
     async function loadJobs() {
             try {
                 const response = await fetch('/api/jobs');
@@ -148,7 +148,7 @@
                 console.error('Error loading jobs:', error);
             }
         }
-    })
+    </script>
    
 
 
