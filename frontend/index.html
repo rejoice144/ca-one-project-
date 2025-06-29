@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "utf-8">
+        <meta name ="viewport" content ="width=device-width,initial-scale=1.0">
+        <title>metal engineering works - management system</title>
+        <link rel = "stylesheet" href = "style.css">
+    </head>
+<body>
+    <div class = "container">
+        <header>
+            <h1>metal engineering works</h1>
+            <p>job management system</p>
+        </header>
+        <nav>
+            <a href = "index.html" class="nav-link active">home</a>
+            <a href = "jobs.html" class="nav-link">jobs</a>
+            <a href="clients.html" class ="nav-link">client</a>
+            <a href="materials.html" class = "nav-link">materials</a>
+        </nav>
+        <main>
+            <div class="dashboard">
+                <h2>Dashboard</h2>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>Total Jobs</h3>
+                        <span id="totalJobs">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Jobs</h3>
+                        <span id="activeJobs">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Clients</h3>
+                        <span id="totalClients">0</span>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <button onclick="location.href='jobs.html'">Manage Jobs</button>
+                    <button onclick="location.href='clients.html'">Manage Clients</button>
+                    <button onclick="location.href='materials.html'">Manage Materials</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src ="script.js"></script>
+    <script>
+        //load dashboard data when page loads
+        document.addEventListener('DOMContentLoaded', loadDashboard) ;
+        async function loadDashboard(){
+            try{
+                const jobs = await fetch('/api/jobs').then(r=>r.json);
+          const clients = await fetch('/api/clients').then(r => r.json());
+                
+                document.getElementById('totalJobs').textContent = jobs.length;
+                document.getElementById('activeJobs').textContent = 
+                    jobs.filter(job => job.status !== 'completed').length;
+                document.getElementById('totalClients').textContent = clients.length;
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+    </script>
+</body>
+</html>
