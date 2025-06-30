@@ -147,7 +147,25 @@
             } catch (error) {
                 console.error('Error loading jobs:', error);
             }
-        }
+            async function editJob(id){
+                try{
+                    const response = await fetch(`/api/jobs/${id}`)
+                    const job = response.JSON();
+                    document.querySelector('#jobId').value = job.id;
+                    document.getElementById('clientName').value = job.clientName;
+                    document.getElementById('jobDescription').value= job.description;
+                    document.getElementById('materials').value = Array.isArray(job.materials) ? job.materials.join(', ') : job.materials;
+                    document.getElementById('estimatedCost').value = job.estimatedCost;
+                    document.getElementById('status').value = job.status;
+                    document.getElementById('startDate').value = job.startDate;
+                    document.getElementById('submitBtn').textContent = 'Update Job';
+                }
+                catch(error){
+                    console.error('error',err);
+                }
+                }
+
+            }
     </script>
    
 
