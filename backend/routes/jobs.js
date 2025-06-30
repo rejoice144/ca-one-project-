@@ -49,4 +49,17 @@ router.post('/',(req,res)=>{
     data: newjob
   });
 });
+// update job
+router.put('/:id',(req,res)=>{
+  const jobs= readJobs();
+  const jobIndex = jobs.findIndex(j=>j.id === req.params.id);
+  if(!jobIndex)
+  {
+    return res.status(404).json({error:'job not found'});
+
+  }
+  jobs[jobIndex]=req.body
+  writeJobs(jobs);
+  res.json(jobs[jobIndex]);
+});
 module.exports = router;
