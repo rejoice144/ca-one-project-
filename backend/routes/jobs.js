@@ -36,6 +36,7 @@ router.get('/:id', (req, res) => {
 });
 // create a new job
 router.post('/',(req,res)=>{
+  console.log(' Incoming POST /api/jobs body:', req.body);
   const jobs = readJobs();
   const newjob = {
     id:jobs.length > 0 ? Math.max(...jobs.map(j => j.id)) + 1 : 1,
@@ -43,11 +44,18 @@ router.post('/',(req,res)=>{
     createdDate : new Date().toISOString().split('T')[0]
   };
   jobs.push(newjob);
-  writeJobs(jobs)
+  try{
+  writeJobs(jobs);
+  console.log(' Written new job:', newjob);
   res.status(201).json({
-    message: ' New job successfully added to jobs.json',
+    message: ' job added',
+    
     data: newjob
   });
+  }catch(err){
+res.status(500).json({error:'failed'});
+  }
+    
 });
 // update job
 router.put('/:id',(req,res)=>{
@@ -59,7 +67,11 @@ router.put('/:id',(req,res)=>{
 
   }
   jobs[jobIndex]={...jobs[jobIndex],...req.body};
+  try{
   writeJobs(jobs);
   res.json(jobs[jobIndex]);
+}catch(err){
+  res.status(500).json({error:'failed'})
+}
 });
 module.exports = router;
