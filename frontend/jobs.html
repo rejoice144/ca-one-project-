@@ -147,10 +147,10 @@
             } catch (error) {
                 console.error('Error loading jobs:', error);
             }
-            async function editJob(id){
-                try{
+    async function editJob(id){
+            try{
                     const response = await fetch(`/api/jobs/${id}`)
-                    const job = await response.JSON();
+                    const job = await response.json();
                     document.querySelector('#jobId').value = job.id;
                     document.getElementById('clientName').value = job.clientName;
                     document.getElementById('jobDescription').value= job.description;
@@ -165,7 +165,7 @@
                 }
                 }
 
-            }
+    }
     </script>
    
 
