@@ -53,12 +53,12 @@ router.post('/',(req,res)=>{
 router.put('/:id',(req,res)=>{
   const jobs= readJobs();
   const jobIndex = jobs.findIndex(j=>j.id === req.params.id);
-  if(!jobIndex)
+  if(jobIndex === -1)
   {
     return res.status(404).json({error:'job not found'});
 
   }
-  jobs[jobIndex]=req.body
+  jobs[jobIndex]={...jobs[jobIndex],...req.body};
   writeJobs(jobs);
   res.json(jobs[jobIndex]);
 });
