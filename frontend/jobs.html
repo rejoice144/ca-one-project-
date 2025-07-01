@@ -178,4 +178,11 @@
         alert('Cancel delete');
     }
 }
+  function cancelEdit() {
+            document.getElementById('jobForm').reset();
+            document.getElementById('jobId').value = '';
+            document.getElementById('submitBtn').textContent = 'Add Job';
+        }
 </script>
+</body>
+</html>
