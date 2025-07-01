@@ -74,4 +74,24 @@ router.put('/:id',(req,res)=>{
   res.status(500).json({error:'failed'})
 }
 });
+//delete job
+router.delete('/:id', (req, res) => {
+    const jobs = readJobs();
+    const jobIndex = jobs.findIndex(j => j.id === parseInt(req.params.id));
+
+    if (jobIndex === -1) {
+        return res.status(404).json({ error: 'Job not found' });
+    }
+
+    jobs.splice(jobIndex, 1); 
+
+    try {
+        writeJobs(jobs);  
+        res.json({ message: 'Job deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete job' });
+    }
+});
+
+
 module.exports = router;
