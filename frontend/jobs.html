@@ -1,172 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jobs - Metal Engineering Works</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jobs - Metal Engineering Works</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Metal Engineering Works</h1>
-            <p>Jobs Management</p>
-        </header>
+  <div class="container">
+    <header>
+      <h1>Metal Engineering Works</h1>
+      <p>Jobs Management</p>
+    </header>
 
-        <nav>
-            <a href="index.html" class="nav-link">Home</a>
-            <a href="jobs.html" class="nav-link active">Jobs</a>
-            <a href="clients.html" class="nav-link">Clients</a>
-            <a href="materials.html" class="nav-link">Materials</a>
-        </nav>
+    <nav>
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="jobs.html" class="nav-link active">Jobs</a>
+      <a href="clients.html" class="nav-link">Clients</a>
+      <a href="materials.html" class="nav-link">Materials</a>
+    </nav>
 
-        <main>
-            <!-- Add Job Form -->
-            <div class="form-section">
-                <h2>Add New Job</h2>
-                <form id="jobForm">
-                    <input type="hidden" id="jobId">
-                    
-                    <label for="clientName">Client Name:</label>
-                    <input type="text" id="clientName" required>
-                    
-                    <label for="jobDescription">Job Description:</label>
-                    <textarea id="jobDescription" required></textarea>
-                    
-                    <label for="materials">Materials Needed:</label>
-                    <input type="text" id="materials" placeholder="e.g. steel bars, hinges">
-                    
-                    <label for="estimatedCost">Estimated Cost ($):</label>
-                    <input type="number" id="estimatedCost" min="0" step="0.01">
-                    
-                    <label for="status">Status:</label>
-                    <select id="status">
-                        <option value="pending">Pending</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                    
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate">
-                    
-                    <button type="submit" id="submitBtn">Add Job</button>
-                    <button type="button" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
-                </form>
-            </div>
+    <main>
+      <!-- Add Job Form -->
+      <div class="form-section">
+        <h2>Add New Job</h2>
+        <form id="jobForm">
+          <input type="hidden" id="jobId" />
 
-            <!-- Jobs List -->
-            <div class="list-section">
-                <h2>All Jobs</h2>
-                <div id="jobsList"></div>
+          <label for="clientName">Client Name:</label>
+          <input type="text" id="clientName" required />
 
-            </div>
-        </main>
-    </div>
-    <script src="script.js"></script>
-<script>
-    // Load jobs when page loads
+          <label for="jobDescription">Job Description:</label>
+          <textarea id="jobDescription" required></textarea>
+
+          <label for="materials">Materials Needed:</label>
+          <input type="text" id="materials" placeholder="e.g. steel bars, hinges" />
+
+          <label for="estimatedCost">Estimated Cost ($):</label>
+          <input type="number" id="estimatedCost" min="0" step="0.01" />
+
+          <label for="status">Status:</label>
+          <select id="status">
+            <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+
+          <label for="startDate">Start Date:</label>
+          <input type="date" id="startDate" />
+
+          <button type="submit" id="submitBtn">Add Job</button>
+          <button type="button" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
+        </form>
+      </div>
+
+      <!-- Jobs List -->
+      <div class="list-section">
+        <h2>All Jobs</h2>
+        <div id="jobsList"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
-    loadJobs();
-    
-    // Form submission
-    document.getElementById('jobForm').addEventListener('submit', async (e) => {
+      loadJobs();
+
+      document.getElementById('jobForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-    const jobData = {
-        clientName: document.getElementById('clientName').value,
-        description: document.getElementById('jobDescription').value,
-        materials: document.getElementById('materials').value.split(',').map(m => m.trim()),
-        estimatedCost: parseFloat(document.getElementById('estimatedCost').value) || 0,
-        status: document.getElementById('status').value,
-        startDate: document.getElementById('startDate').value
-    };
+        const jobData = {
+          clientName: document.getElementById('clientName').value,
+          description: document.getElementById('jobDescription').value,
+          materials: document.getElementById('materials').value.split(',').map(m => m.trim()),
+          estimatedCost: parseFloat(document.getElementById('estimatedCost').value) || 0,
+          status: document.getElementById('status').value,
+          startDate: document.getElementById('startDate').value
+        };
 
-    const jobId = document.getElementById('jobId').value;
+        const jobId = document.getElementById('jobId').value;
 
-    try {
-        let response;
-        if (jobId) {
-            response = await fetch(`/api/jobs/${jobId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(jobData)
-            });
-        } else {
-            response = await fetch('/api/jobs', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(jobData)
-            });
-        }
+        try {
+          const url = jobId ? `/api/jobs/${jobId}` : '/api/jobs';
+          const method = jobId ? 'PUT' : 'POST';
 
-        if (response.ok) {
+          const response = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(jobData)
+          });
+
+          if (response.ok) {
             document.getElementById('jobForm').reset();
             document.getElementById('jobId').value = '';
             document.getElementById('submitBtn').textContent = 'Add Job';
             loadJobs();
-        } else {
-            alert('Error saving job');
+          } else {
+            const error = await response.json();
+            alert('Error saving job: ' + (error.message || 'Unknown error'));
+          }
+        } catch (err) {
+          console.error('Error:', err);
+          alert('Error saving job');
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error saving job');
-    }
-});
+      });
     });
+
     async function loadJobs() {
-            try {
-                const response = await fetch('/api/jobs');
-                const jobs = await response.json();
-                
-                const jobsList = document.getElementById('jobsList');
-                jobsList.innerHTML = '';
-                
-                if (jobs.length === 0) {
-                    jobsList.innerHTML = '<p>No jobs found.</p>';
-                    return;
-                }
-                
-                jobs.forEach(job => {
-                    const jobDiv = document.createElement('div');
-                    jobDiv.className = 'item-card';
-                    jobDiv.innerHTML = `
-                        <h3>Job #${job.id}</h3>
-                        <p><strong>Client:</strong> ${job.clientName}</p>
-                        <p><strong>Description:</strong> ${job.description}</p>
-                        <p><strong>Materials:</strong> ${Array.isArray(job.materials) ? job.materials.join(', ') : job.materials}</p>
-                        <p><strong>Cost:</strong> $${job.estimatedCost}</p>
-                        <p><strong>Status:</strong> ${job.status}</p>
-                        <p><strong>Start Date:</strong> ${job.startDate}</p>
-                        <div class="actions">
-                            <button onclick="editJob(${job.id})">Edit</button>
-                            <button onclick="deleteJob(${job.id})" class="delete-btn">Delete</button>
-                        </div>
-                    `;
-                    jobsList.appendChild(jobDiv);
-                });
-            } catch (error) {
-                console.error('Error loading jobs:', error);
-            }
-    async function editJob(id){
-            try{
-                    const response = await fetch(`/api/jobs/${id}`)
-                    const job = await response.json();
-                    document.querySelector('#jobId').value = job.id;
-                    document.getElementById('clientName').value = job.clientName;
-                    document.getElementById('jobDescription').value= job.description;
-                    document.getElementById('materials').value = Array.isArray(job.materials) ? job.materials.join(', ') : job.materials;
-                    document.getElementById('estimatedCost').value = job.estimatedCost;
-                    document.getElementById('status').value = job.status;
-                    document.getElementById('startDate').value = job.startDate;
-                    document.getElementById('submitBtn').textContent = 'Update Job';
-                }
-                catch(error){
-                    console.error('error',error);
-                }
-                }
+      try {
+        const response = await fetch('/api/jobs');
+        const jobs = await response.json();
 
+        const jobsList = document.getElementById('jobsList');
+        jobsList.innerHTML = '';
+
+        if (jobs.length === 0) {
+          jobsList.innerHTML = '<p>No jobs found.</p>';
+          return;
+        }
+
+        jobs.forEach(job => {
+          const jobDiv = document.createElement('div');
+          jobDiv.className = 'item-card';
+          jobDiv.innerHTML = `
+            <h3>Job #${job.id}</h3>
+            <p><strong>Client:</strong> ${job.clientName}</p>
+            <p><strong>Description:</strong> ${job.description}</p>
+            <p><strong>Materials:</strong> ${Array.isArray(job.materials) ? job.materials.join(', ') : job.materials}</p>
+            <p><strong>Cost:</strong> $${job.estimatedCost}</p>
+            <p><strong>Status:</strong> ${job.status}</p>
+            <p><strong>Start Date:</strong> ${job.startDate}</p>
+            <div class="actions">
+              <button onclick="editJob(${job.id})">Edit</button>
+              <button onclick="deleteJob(${job.id})" class="delete-btn">Delete</button>
+            </div>
+          `;
+          jobsList.appendChild(jobDiv);
+        });
+      } catch (err) {
+        console.error('Error loading jobs:', err);
+      }
     }
-    </script>
-   
 
+    async function editJob(id) {
+      try {
+        const response = await fetch(`/api/jobs/${id}`);
+        const job = await response.json();
 
+        document.getElementById('jobId').value = job.id;
+        document.getElementById('clientName').value = job.clientName;
+        document.getElementById('jobDescription').value = job.description;
+        document.getElementById('materials').value = Array.isArray(job.materials) ? job.materials.join(', ') : job.materials;
+        document.getElementById('estimatedCost').value = job.estimatedCost;
+        document.getElementById('status').value = job.status;
+        document.getElementById('startDate').value = job.startDate;
+        document.getElementById('submitBtn').textContent = 'Update Job';
+      } catch (err) {
+        console.error('Error fetching job:', err);
+      }
+    }
+    async function deleteJob(id) {
+    if (confirm('Are you sure you want to delete this job?')) {
+        try {
+            const response = await fetch(`/api/jobs/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                loadJobs();
+            } else {
+                alert('Error deleting job');
+            }
+        } catch (error) {
+            console.error('Error deleting job:', error)
+        }
+    } else {
+        alert('Cancel delete');
+    }
+}
+</script>
