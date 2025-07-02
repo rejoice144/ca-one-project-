@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang ="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>clients</title>
+    <link rel="stylesheet" href="style.css">
+    <head>
+        <body>
+            <div class="container">
+                <header>
+                    <h1>metal engineering works</h1>
+                    <p>clients management</p>
+                    </header>
+                    <nav>
+                        <a href="index.html" class ="nav-link">home</a>
+                        <a href="job.html" class="nav-link">jobs</a>
+                        <a href="clients.html" class ="nav-link active">clients</a>
+                        <a href="materials.html" class ="nav-link active">material</a>
+                    </nav>
+                    <main>
+                        <!--client form-->
+                        <div class="form-section">
+                            <h2>add new client</h2>
+                             <form id="clientForm">
+                    <input type="hidden" id="clientId">
+                    
+                    <label for="clientName">Company Name:</label>
+                    <input type="text" id="clientName" required>
+                    
+                    <label for="contactPerson">Contact Person:</label>
+                    <input type="text" id="contactPerson" required>
+                    
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" required>
+                    
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                    
+                    <label for="address">Address:</label>
+                    <textarea id="address" required></textarea>
+                    
+                    <button type="submit" id="submitBtn">Add Client</button>
+                    <button type="button" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
+                </form>
+            </div>
+            
+            <!-- Clients List -->
+            <div class="list-section">
+                <h2>All Clients</h2>
+                <div id="clientsList"></div>
+            </div>
+        </main>
+    </div>
+            </main>
+
+    </body>
+</html>
