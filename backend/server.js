@@ -11,8 +11,11 @@ const PORT = 3000;
  app.use(express.static(path.join(__dirname,'../frontend')));
 // Import routers
 const jobsRouter = require('./routes/jobs');
+const clientsRoutes = require('./routes/clients');
+
 // use routes
 app.use('/api/jobs',jobsRouter);
+app.use('/api/clients', clientsRoutes);
 
 // server frontend
 app.get('/',(req,res)=>{
