@@ -102,3 +102,36 @@
                 alert('Error saving client');
             }
         });
+        async function loadClients() {
+            try {
+                const response = await fetch('/api/clients');
+                const clients = await response.json();
+                
+                const clientsList = document.getElementById('clientsList');
+                clientsList.innerHTML = '';
+                
+                if (clients.length === 0) {
+                    clientsList.innerHTML = '<p>No clients found.</p>';
+                    return;
+                }
+                
+                clients.forEach(client => {
+                    const clientDiv = document.createElement('div');
+                    clientDiv.className = 'item-card';
+                    clientDiv.innerHTML = `
+                        <h3>${client.name}</h3>
+                        <p><strong>Contact:</strong> ${client.contact}</p>
+                        <p><strong>Phone:</strong> ${client.phone}</p>
+                        <p><strong>Email:</strong> ${client.email}</p>
+                        <p><strong>Address:</strong> ${client.address}</p>
+                        <div class="actions">
+                            <button onclick="editClient(${client.id})">Edit</button>
+                            <button onclick="deleteClient(${client.id})" class="delete-btn">Delete</button>
+                        </div>
+                    `;
+                    clientsList.appendChild(clientDiv);
+                });
+            } catch (error) {
+                console.error('Error loading clients:', error);
+            }
+        }

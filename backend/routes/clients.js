@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-const dataPath = path.join(__dirname, '../data/clients.json');
+const dataPath = path.join(__dirname, '../database/clients.json');
 
 // Helper function to read clients data
 function readClients() {
@@ -71,3 +71,4 @@ router.post('/', (req, res) => {
     writeClients(clients);
     res.status(201).json(newClient);
 });
+module.exports = router;
