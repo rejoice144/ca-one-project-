@@ -19,3 +19,55 @@ function readClients() {
 function writeClients(clients) {
     fs.writeFileSync(dataPath, JSON.stringify(clients, null, 2));
 }
+// GET all clients
+router.get('/', (req, res) => {
+    const clients = readClients();
+    res.json(clients);
+});
+
+// GET single client
+router.get('/:id', (req, res) => {
+    const clients = readClients();
+    const client = clients.find(c => c.id === parseInt(req.params.id));
+    
+    if (!client) {
+        return res.status(404).json({ error: 'Client not found' });
+    }
+    
+    res.json(client);
+});
+
+// POST create new client
+router.post('/', (req, res) => {
+    const clients = readClients();
+    
+    // Validate required fields
+    const { name, contact, phone, email, address } = req.body;
+    if (!name || !contact || !phone || !email || !address) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+    
+    // Check if client already exists
+    const existingClient = clients.find(c => 
+        c.name.toLowerCase() === name.toLowerCase() || 
+        c.email.toLowerCase() === email.toLowerCase()
+    );
+    
+    if (existingClient) {
+        return res.status(400).json({ error: 'Client with this name or email already exists' });
+    }
+    
+    const newClient = {
+        id: clients.length > 0 ? Math.max(...clients.map(c => c.id)) + 1 : 1,
+        name: name.trim(),
+        contact: contact.trim(),
+        phone: phone.trim(),
+        email: email.trim().toLowerCase(),
+        address: address.trim(),
+        createdDate: new Date().toISOString().split('T')[0]
+    };
+    
+    clients.push(newClient);
+    writeClients(clients);
+    res.status(201).json(newClient);
+});
