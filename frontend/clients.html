@@ -51,7 +51,54 @@
             </div>
         </main>
     </div>
-            </main>
-
-    </body>
-</html>
+     
+    <script src="script.js"></script>
+    <script>
+        // Load clients when page loads
+        document.addEventListener('DOMContentLoaded', loadClients);
+        
+        // Form submission
+        document.getElementById('clientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const clientData = {
+                name: document.getElementById('clientName').value,
+                contact: document.getElementById('contactPerson').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value
+            };
+            
+            const clientId = document.getElementById('clientId').value;
+            
+            try {
+                let response;
+                if (clientId) {
+                    // Update existing client
+                    response = await fetch(`/api/clients/${clientId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(clientData)
+                    });
+                } else {
+                    // Create new client
+                    response = await fetch('/api/clients', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(clientData)
+                    });
+                }
+                
+                if (response.ok) {
+                    document.getElementById('clientForm').reset();
+                    document.getElementById('clientId').value = '';
+                    document.getElementById('submitBtn').textContent = 'Add Client';
+                    loadClients();
+                } else {
+                    alert('Error saving client');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving client');
+            }
+        });
