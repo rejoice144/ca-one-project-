@@ -139,7 +139,7 @@
          async function editClient(id) {
             try {
                 const response = await fetch(`/api/clients/${id}`);
-                const client = await response.json();
+const client = await response.json();
                 
                 document.getElementById('clientId').value = client.id;
                 document.getElementById('clientName').value = client.name;
@@ -152,25 +152,8 @@
                 console.error('Error loading client:', error);
             }
         }
-                async function deleteClient(id) {
-            if (confirm('Are you sure you want to delete this client?')) {
-                try {
-                    const response = await fetch(/api/clients/${id}, {
-                        method: 'DELETE'
-
-                    });
-                    
-                    if (response.ok) {
-                        loadClients();
-                    } else {
-                        alert('Error deleting client');
-                    }
-                } catch (error) {
-                    console.error('Error deleting client:', error);
-                }
-            }
-        }
-async function deleteClient(id) {
+        
+           async function deleteClient(id) {
     if (confirm('Are you sure you want to delete this client?')) {
         try {
             const response = await fetch(`/api/clients/${id}`, {
@@ -179,7 +162,7 @@ async function deleteClient(id) {
             });
 
             if (response.ok) { 
-                loadClient(); 
+                loadClients(); 
             } else {
                 alert('Client could not be deleted');
             }
