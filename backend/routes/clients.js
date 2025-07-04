@@ -71,4 +71,44 @@ router.post('/', (req, res) => {
     writeClients(clients);
     res.status(201).json(newClient);
 });
+// PUT update client
+router.put('/:id', (req, res) => {
+    const clients = readClients();
+    const clientIndex = clients.findIndex(c => c.id === parseInt(req.params.id));
+    
+    if (clientIndex === -1) {
+        return res.status(404).json({ error: 'Client not found' });
+    }
+    
+    // Validate required fields
+    const { name, contact, phone, email, address } = req.body;
+    if (!name || !contact || !phone || !email || !address) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+    
+    // Check if email is taken by another client
+    const existingClient = clients.find(c => 
+        c.id !== parseInt(req.params.id) && 
+        c.email.toLowerCase() === email.toLowerCase()
+    );
+    
+    if (existingClient) {
+        return res.status(400).json({ error: 'Email already in use by another client' });
+    }
+    
+    // Update client
+    clients[clientIndex] = {
+        ...clients[clientIndex],
+        name: name.trim(),
+        contact: contact.trim(),
+        phone: phone.trim(),
+        email: email.trim().toLowerCase(),
+        address: address.trim(),
+        updatedDate: new Date().toISOString().split('T')[0]
+    };
+    
+    writeClients(clients);
+    res.json(clients[clientIndex]);
+});
+
 module.exports = router;

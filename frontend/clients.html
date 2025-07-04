@@ -136,6 +136,22 @@
                 console.error('Error loading clients:', error);
             }
         }
+         async function editClient(id) {
+            try {
+                const response = await fetch(`/api/clients/${id}`);
+                const client = await response.json();
+                
+                document.getElementById('clientId').value = client.id;
+                document.getElementById('clientName').value = client.name;
+                document.getElementById('contactPerson').value = client.contact;
+                document.getElementById('phone').value = client.phone;
+                document.getElementById('email').value = client.email;
+                document.getElementById('address').value = client.address;
+                document.getElementById('submitBtn').textContent = 'Update Client';
+            } catch (error) {
+                console.error('Error loading client:', error);
+            }
+        }
     
  </script>
 </body>
