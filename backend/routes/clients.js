@@ -110,5 +110,73 @@ router.put('/:id', (req, res) => {
     writeClients(clients);
     res.json(clients[clientIndex]);
 });
+router.delete('/:id', (req, res) => {
+    const clients = readClients();
+    const clientIndex = clients.findIndex(c => c.id === parseInt(req.params.id));
+    
+    if (clientIndex === -1) {
+        return res.status(404).json({ error: 'Client not found' });
+    }
+    
+    // Check if client has associated jobs
+    try {
+        const jobsPath = path.join(__dirname, '../data/jobs.json');
+        const jobsData = fs.readFileSync(jobsPath, 'utf8');
+        const jobs = JSON.parse(jobsData);
+        
+        const clientJobs = jobs.filter(job => 
+            job.clientName === clients[clientIndex].name
+        );
+        
+        if (clientJobs.length > 0) {
+            return res.status(400).json({ 
+                error: 'Cannot delete client with existing jobs. Please complete or remove associated jobs first.' 
+            });
+        }
+    } catch (error) {
+        // If jobs file doesn't exist or can't be read, proceed with deletion
+        console.log('Warning: Could not check for associated jobs');
+    }
+    
+    const deletedClient = clients.splice(clientIndex, 1)[0];
+    writeClients(clients);
+    res.json(deletedClient);
+});
+
+// GET client statistics
+router.get('/stats/summary', (req, res) => {
+    const clients = readClients();
+    
+    // Read jobs to get client job counts
+    let clientJobCounts = {};
+    try {
+        const jobsPath = path.join(__dirname, '../data/jobs.json');
+        const jobsData = fs.readFileSync(jobsPath, 'utf8');
+        const jobs = JSON.parse(jobsData);
+        
+        jobs.forEach(job => {
+            if (clientJobCounts[job.clientName]) {
+                clientJobCounts[job.clientName]++;
+            } else {
+                clientJobCounts[job.clientName] = 1;
+            }
+        });
+    } catch (error) {
+        console.log('Warning: Could not read jobs data for statistics');
+    }
+    
+    const stats = {
+        totalClients: clients.length,
+        clientsWithJobs: Object.keys(clientJobCounts).length,
+        averageJobsPerClient: clients.length > 0 ? 
+            Object.values(clientJobCounts).reduce((a, b) => a + b, 0) / clients.length : 0,
+        topClients: Object.entries(clientJobCounts)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 5)
+            .map(([name, jobCount]) => ({ name, jobCount }))
+    };
+    
+    res.json(stats);
+});
 
 module.exports = router;

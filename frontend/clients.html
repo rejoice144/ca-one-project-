@@ -175,21 +175,21 @@ async function deleteClient(id) {
         try {
             const response = await fetch(`/api/clients/${id}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id }) 
+              
             });
 
-            if (response.status === 200) { 
+            if (response.ok) { 
                 loadClient(); 
             } else {
                 alert('Client could not be deleted');
             }
-        } catch (err) {
-            console.error('Delete failed:', err);
+        } catch (error) {
+            console.error('Delete failed:', error);
             
         }
     }
 }
+
     
  </script>
 </body>
