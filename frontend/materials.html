@@ -69,3 +69,54 @@
             </div>
         </main>
     </div>
+        <script src="script.js"></script>
+    <script>
+        // Load materials when page loads
+        document.addEventListener('DOMContentLoaded', loadMaterials);
+        
+        // Form submission
+        document.getElementById('materialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const materialData = {
+                name: document.getElementById('materialName').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+                unit: document.getElementById('unit').value,
+                costPerUnit: parseFloat(document.getElementById('costPerUnit').value),
+                supplier: document.getElementById('suplier').value,
+                description: document.getElementById('description').value
+            };
+            
+            const materialId = document.getElementById('materialId').value;
+            
+            try {
+                let response;
+                if (materialId) {
+                    // Update existing material
+                    response = await fetch(`/api/materials/${materialId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(materialData)
+                    });
+                } else {
+                    // Create new material
+                    response = await fetch('/api/materials', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(materialData)
+                    });
+                }
+                
+                if (response.ok) {
+                    document.getElementById('materialForm').reset();
+                    document.getElementById('materialId').value = '';
+                    document.getElementById('submitBtn').textContent = 'Add Material';
+                    loadMaterials();
+                } else {
+                    alert('Error saving material');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving material');
+            }
+        });
