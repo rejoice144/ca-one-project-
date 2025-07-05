@@ -12,10 +12,13 @@ const PORT = 3000;
 // Import routers
 const jobsRouter = require('./routes/jobs');
 const clientsRoutes = require('./routes/clients');
+const materialsRoutes = require('./routes/materials');
 
 // use routes
 app.use('/api/jobs',jobsRouter);
 app.use('/api/clients', clientsRoutes);
+app.use('/api/materials', materialsRoutes);
+
 
 // server frontend
 app.get('/',(req,res)=>{
