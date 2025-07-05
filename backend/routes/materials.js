@@ -77,6 +77,52 @@ router.post('/', (req, res) => {
     writeMaterials(materials);
     res.status(201).json(newMaterial);
 });
+
+// PUT update material
+router.put('/:id', (req, res) => {
+    const materials = readMaterials();
+    const materialIndex = materials.findIndex(m => m.id === parseInt(req.params.id));
+    
+    if (materialIndex === -1) {
+        return res.status(404).json({ error: 'Material not found' });
+    }
+    
+    // Validate required fields
+    const { name, quantity, unit, costPerUnit, supplier } = req.body;
+    if (!name || quantity === undefined || !unit || costPerUnit === undefined || !supplier) {
+        return res.status(400).json({ error: 'Name, quantity, unit, cost per unit, and supplier are required' });
+    }
+    
+    // Validate numeric fields
+    if (quantity < 0 || costPerUnit < 0) {
+        return res.status(400).json({ error: 'Quantity and cost per unit must be non-negative' });
+    }
+    
+    // Check if name is taken by another material
+    const existingMaterial = materials.find(m => 
+        m.id !== parseInt(req.params.id) && 
+        m.name.toLowerCase() === name.toLowerCase()
+    );
+    
+    if (existingMaterial) {
+        return res.status(400).json({ error: 'Material name already in use' });
+    }
+    
+    // Update material
+    materials[materialIndex] = {
+        ...materials[materialIndex],
+        name: name.trim(),
+        quantity: parseInt(quantity),
+        unit: unit.trim(),
+        costPerUnit: parseFloat(costPerUnit),
+        supplier: supplier.trim(),
+        description: req.body.description ? req.body.description.trim() : '',
+        updatedDate: new Date().toISOString().split('T')[0]
+    };
+    
+    writeMaterials(materials);
+    res.json(materials[materialIndex]);
+});
 module.exports = router;
 
 
