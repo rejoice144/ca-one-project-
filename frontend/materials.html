@@ -69,7 +69,8 @@
             </div>
         </main>
     </div>
-        <script src="script.js"></script>
+
+    <script src="script.js"></script>
     <script>
         // Load materials when page loads
         document.addEventListener('DOMContentLoaded', loadMaterials);
@@ -100,7 +101,7 @@
                     });
                 } else {
                     // Create new material
-                    response = await fetch(`/api/materials`, {
+                    response = await fetch('/api/materials', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(materialData)
@@ -120,6 +121,7 @@
                 alert('Error saving material');
             }
         });
+        
         async function loadMaterials() {
             try {
                 const response = await fetch('/api/materials');
@@ -167,3 +169,6 @@
                 console.error('Error loading materials:', error);
             }
         }
+            </script>
+</body>
+</html>

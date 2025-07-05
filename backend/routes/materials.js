@@ -17,12 +17,9 @@ function readMaterials() {
 
 // Helper function to write materials data
 function writeMaterials(materials) {
-    try {
-        fs.writeFileSync(dataPath, JSON.stringify(materials, null, 2));
-    } catch (err) {
-        console.error('Failed to write materials:', err);
-    }
+    fs.writeFileSync(dataPath, JSON.stringify(materials, null, 2));
 }
+
 // GET all materials
 router.get('/', (req, res) => {
     const materials = readMaterials();
