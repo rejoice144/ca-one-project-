@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-const dataPath = path.join(__dirname, '../data/materials.json');
+const dataPath = path.join(__dirname, '../database/materials.json');
 
 // Helper function to read materials data
 function readMaterials() {
@@ -17,7 +17,11 @@ function readMaterials() {
 
 // Helper function to write materials data
 function writeMaterials(materials) {
-    fs.writeFileSync(dataPath, JSON.stringify(materials, null, 2));
+    try {
+        fs.writeFileSync(dataPath, JSON.stringify(materials, null, 2));
+    } catch (err) {
+        console.error('Failed to write materials:', err);
+    }
 }
 // GET all materials
 router.get('/', (req, res) => {

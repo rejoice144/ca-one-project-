@@ -100,7 +100,7 @@
                     });
                 } else {
                     // Create new material
-                    response = await fetch('/api/materials', {
+                    response = await fetch(`/api/materials`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(materialData)
@@ -120,3 +120,50 @@
                 alert('Error saving material');
             }
         });
+        async function loadMaterials() {
+            try {
+                const response = await fetch('/api/materials');
+                const materials = await response.json();
+                
+                const materialsList = document.getElementById('materialsList');
+                materialsList.innerHTML = '';
+                
+                if (materials.length === 0) {
+                    materialsList.innerHTML = '<p>No materials found.</p>';
+                    document.getElementById('totalMaterials').textContent = '0';
+                    document.getElementById('totalValue').textContent = '0.00';
+                    return;
+                }
+                
+                // Calculate totals
+                let totalValue = 0;
+                
+                materials.forEach(material => {
+                    const itemValue = material.quantity * material.costPerUnit;
+                    totalValue += itemValue;
+                    
+                    const materialDiv = document.createElement('div');
+                    materialDiv.className = 'item-card';
+                    materialDiv.innerHTML = `
+                        <h3>${material.name}</h3>
+                        <p><strong>Quantity:</strong> ${material.quantity} ${material.unit}</p>
+                        <p><strong>Cost Per Unit:</strong> $${material.costPerUnit.toFixed(2)}</p>
+                        <p><strong>Total Value:</strong> $${itemValue.toFixed(2)}</p>
+                        <p><strong>Supplier:</strong> ${material.supplier}</p>
+                        ${material.description ? `<p><strong>Description:</strong> ${material.description}</p>` : ''}
+                        <div class="actions">
+                            <button onclick="editMaterial(${material.id})">Edit</button>
+                            <button onclick="deleteMaterial(${material.id})" class="delete-btn">Delete</button>
+                        </div>
+                    `;
+                    materialsList.appendChild(materialDiv);
+                });
+                
+                // Update summary
+                document.getElementById('totalMaterials').textContent = materials.length;
+                document.getElementById('totalValue').textContent = totalValue.toFixed(2);
+                
+            } catch (error) {
+                console.error('Error loading materials:', error);
+            }
+        }
