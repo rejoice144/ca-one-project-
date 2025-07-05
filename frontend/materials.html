@@ -169,6 +169,23 @@
                 console.error('Error loading materials:', error);
             }
         }
+        async function editMaterial(id) {
+            try {
+                const response = await fetch(`/api/materials/${id}`);
+                const material = await response.json();
+                
+                document.getElementById('materialId').value = material.id;
+                document.getElementById('materialName').value = material.name;
+                document.getElementById('quantity').value = material.quantity;
+                document.getElementById('unit').value = material.unit;
+                document.getElementById('costPerUnit').value = material.costPerUnit;
+                document.getElementById('supplier').value = material.supplier;
+                document.getElementById('description').value = material.description || '';
+                document.getElementById('submitBtn').textContent = 'Update Material';
+            } catch (error) {
+                console.error('Error loading material:', error);
+            }
+        }
             </script>
 </body>
 </html>
