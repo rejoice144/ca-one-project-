@@ -172,6 +172,11 @@ const client = await response.json();
         }
     }
 }
+  function cancelEdit() {
+            document.getElementById('clientForm').reset();
+            document.getElementById('clientId').value = '';
+            document.getElementById('submitBtn').textContent = 'Add Client';
+        }
 
     
  </script>
