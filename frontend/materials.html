@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materials - Metal Engineering Works</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Metal Engineering Works</h1>
+            <p>Materials Management</p>
+        </header>
+
+        <nav>
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="jobs.html" class="nav-link">Jobs</a>
+            <a href="clients.html" class="nav-link">Clients</a>
+            <a href="materials.html" class="nav-link active">Materials</a>
+        </nav>
+
+        <main>
+            <!-- Add Material Form -->
+            <div class="form-section">
+                <h2>Add New Material</h2>
+                <form id="materialForm">
+                    <input type="hidden" id="materialId">
+                    
+                    <label for="materialName">Material Name:</label>
+                    <input type="text" id="materialName" required>
+                    
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" min="0" required>
+                    
+                    <label for="unit">Unit:</label>
+                    <select id="unit" required>
+                        <option value="">Select Unit</option>
+                        <option value="pieces">Pieces</option>
+                        <option value="kg">Kilograms</option>
+                        <option value="meters">Meters</option>
+                        <option value="sheets">Sheets</option>
+                        <option value="rolls">Rolls</option>
+                        <option value="tons">Tons</option>
+                    </select>
+                    
+                    <label for="costPerUnit">Cost Per Unit ($):</label>
+                    <input type="number" id="costPerUnit" min="0" step="0.01" required>
+                    
+                    <label for="supplier">Supplier:</label>
+                    <input type="text" id="supplier" required>
+                    
+                    <label for="description">Description:</label>
+                    <textarea id="description"></textarea>
+                    
+                    <button type="submit" id="submitBtn">Add Material</button>
+                    <button type="button" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
+                </form>
+            </div>
+
+            <!-- Materials List -->
+            <div class="list-section">
+                <h2>Materials Inventory</h2>
+                <div class="summary">
+                    <p><strong>Total Materials:</strong> <span id="totalMaterials">0</span></p>
+                    <p><strong>Total Inventory Value:</strong> $<span id="totalValue">0.00</span></p>
+                </div>
+                <div id="materialsList"></div>
+            </div>
+        </main>
+    </div>
