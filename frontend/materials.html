@@ -186,23 +186,24 @@
                 console.error('Error loading material:', error);
             }
         }
-          async function deleteMaterial(id) {
-            if (confirm('Are you sure you want to delete this material?')) {
-                try {
-                    const response = await fetch(`/api/materials/${id}`, {
-                        method: 'DELETE'
-                    });
-                    
-                    if (response.ok) {
-                        loadMaterials();
-                    } else {
-                        alert('Error deleting material');
-                    }
-                } catch (error) {
-                    console.error('Error deleting material:', error);
+      async function deleteMaterial(id) {
+        if (confirm('Are you sure you want to delete this material?')) {
+            try {
+                const response = await fetch(`/api/materials/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadMaterials(); 
+                } else {
+                    alert('Error deleting material');
                 }
+            } catch (error) {
+                console.error('Error deleting material:', error);
+                alert('An unexpected error occurred.');
             }
         }
+    }
             </script>
 </body>
 </html>

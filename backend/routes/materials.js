@@ -123,6 +123,123 @@ router.put('/:id', (req, res) => {
     writeMaterials(materials);
     res.json(materials[materialIndex]);
 });
+// DELETE client
+router.delete('/:id', (req, res) => {
+    const materials = readMaterials();
+    const materialIndex = materials.findIndex(m => m.id === parseInt(req.params.id));
+    
+    if (materialIndex === -1) {
+        return res.status(404).json({ error: 'Material not found' });
+    }
+    
+    // Check if material is used in any jobs
+    try {
+        const jobsPath = path.join(__dirname, '../data/jobs.json');
+        const jobsData = fs.readFileSync(jobsPath, 'utf8');
+        const jobs = JSON.parse(jobsData);
+        
+        const materialName = materials[materialIndex].name.toLowerCase();
+        const jobsUsingMaterial = jobs.filter(job => {
+            if (Array.isArray(job.materials)) {
+                return job.materials.some(mat => 
+                    mat.toLowerCase().includes(materialName)
+                );
+            }
+            if (quantity === undefined || quantity < 0) {
+              res.status(400).json({ error: 'Valid quantity is required' }); 
+               }
+            return false;
+        });
+        
+        if (jobsUsingMaterial.length > 0) {
+            return res.status(400).json({ 
+                error: 'Cannot delete material that is used in existing jobs. Please update or complete associated jobs first.' 
+            });
+        }
+    } catch (error) {
+        // If jobs file doesn't exist or can't be read, proceed with deletion
+        console.log('Warning: Could not check for material usage in jobs');
+    }
+    
+    const deletedMaterial = materials.splice(materialIndex, 1)[0];
+    writeMaterials(materials);
+    res.json(deletedMaterial);
+});
+
+// GET materials statistics
+router.get('/stats/summary', (req, res) => {
+    const materials = readMaterials();
+    
+    const stats = {
+        totalMaterials: materials.length,
+        totalInventoryValue: materials.reduce((total, mat) => 
+            total + (mat.quantity * mat.costPerUnit), 0
+        ),
+        lowStockItems: materials.filter(mat => mat.quantity < 10),
+        topSuppliers: getTopSuppliers(materials),
+        averageCostPerUnit: materials.length > 0 ? 
+            materials.reduce((total, mat) => total + mat.costPerUnit, 0) / materials.length : 0
+    };
+    
+    res.json(stats);
+});
+
+// PUT update material quantity (for inventory management)
+router.put('/:id/quantity', (req, res) => {
+    const materials = readMaterials();
+    const materialIndex = materials.findIndex(m => m.id === parseInt(req.params.id));
+    
+    if (materialIndex === -1) {
+        return res.status(404).json({ error: 'Material not found' });
+    }
+    
+    const { quantity, operation } = req.body; // operation can be 'add', 'subtract', or 'set'
+    
+    if (quantity === undefined || quantity < 0) {
+        return res.status(400).json({ error: 'Valid quantity is required' });
+    }
+    
+    let newQuantity;
+    switch (operation) {
+        case 'add':
+            newQuantity = materials[materialIndex].quantity + parseInt(quantity);
+            break;
+        case 'subtract':
+            newQuantity = materials[materialIndex].quantity - parseInt(quantity);
+            if (newQuantity < 0) {
+                return res.status(400).json({ error: 'Cannot subtract more than available quantity' });
+            }
+            break;
+        case 'set':
+        default:
+            newQuantity = parseInt(quantity);
+            break;
+    }
+    
+    materials[materialIndex].quantity = newQuantity;
+    materials[materialIndex].updatedDate = new Date().toISOString().split('T')[0];
+    
+    writeMaterials(materials);
+    res.json(materials[materialIndex]);
+});
+
+// Helper function to get top suppliers
+function getTopSuppliers(materials) {
+    const supplierCounts = {};
+    materials.forEach(material => {
+        if (supplierCounts[material.supplier]) {
+            supplierCounts[material.supplier]++;
+        } else {
+            supplierCounts[material.supplier] = 1;
+        }
+    });
+    
+    return Object.entries(supplierCounts)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 5)
+        .map(([supplier, materialCount]) => ({ supplier, materialCount }));
+};
+
 module.exports = router;
 
 
