@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-const dataPath = path.join(__dirname, '../database/materials.json');
+const dataPath = path.join(__dirname, '../data/materials.json');
 
 // Helper function to read materials data
 function readMaterials() {

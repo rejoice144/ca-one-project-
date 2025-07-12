@@ -1,97 +1,154 @@
 const express = require('express');
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
 const router = express.Router();
 
-const dataPath = path.join(__dirname,'../database/jobs.json')
-//helper function read job data
-function readJobs(){
-        try{
-            const data = fs.readFileSync(dataPath,'utf8');
-            return JSON.parse(data);
-        }catch(error){
-          return[];
-        }
-      }
+const dataPath = path.join(__dirname, '../data/jobs.json');
 
-      //helper function to write jobs data
-function writeJobs(jobs)     {
-  fs.writeFileSync(dataPath,JSON.stringify(jobs,null,2));
-} 
-// get all jobs
-router.get('/',(req,res)=>{
-  const jobs = readJobs();
-  res.json(jobs)
-});
-// get single job
-router.get('/:id', (req, res) => {
-  const jobs= readJobs();
-  const job = jobs.find(j => j.id === parseInt(req.params.id));
-  if(!job)
-  {
-    return res.status(404).json({error : 'job not found'});
-  }
-
-  res.json(job);
-});
-// create a new job
-router.post('/',(req,res)=>{
-  console.log(' Incoming POST /api/jobs body:', req.body);
-  const jobs = readJobs();
-  const newjob = {
-    id:jobs.length > 0 ? Math.max(...jobs.map(j => j.id)) + 1 : 1,
-    ...req.body,
-    createdDate : new Date().toISOString().split('T')[0]
-  };
-  jobs.push(newjob);
-  try{
-  writeJobs(jobs);
-  console.log(' Written new job:', newjob);
-  res.status(201).json({
-    message: ' job added',
-    
-    data: newjob
-  });
-  }catch(err){
-res.status(500).json({error:'failed'});
-  }
-    
-});
-// update job
-router.put('/:id',(req,res)=>{
-  const jobs= readJobs();
-  const jobIndex = jobs.findIndex(j=>j.id === parseInt(req.params.id));
-  if(jobIndex === -1)
-  {
-    return res.status(404).json({error:'job not found'});
-
-  }
-  jobs[jobIndex]={...jobs[jobIndex],...req.body};
-  try{
-  writeJobs(jobs);
-  res.json(jobs[jobIndex]);
-}catch(err){
-  res.status(500).json({error:'failed'})
-}
-});
-//delete job
-router.delete('/:id', (req, res) => {
-    const jobs = readJobs();
-    const jobIndex = jobs.findIndex(j => j.id === parseInt(req.params.id));
-
-    if (jobIndex === -1) {
-        return res.status(404).json({ error: 'Job not found' });
-    }
-
-    jobs.splice(jobIndex, 1); 
-
+// Helper function to read jobs data
+function readJobs() {
     try {
-        writeJobs(jobs);  
-        res.json({ message: 'Job deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to delete job' });
+        if (!fs.existsSync(dataPath)) {
+            // Create empty file if it doesn't exist
+            fs.writeFileSync(dataPath, '[]');
+            return [];
+        }
+        const data = fs.readFileSync(dataPath, 'utf8');
+        if (!data.trim()) {
+            return [];
+        }
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading jobs:', error);
+        return [];
+    }
+}
+
+// Helper function to write jobs data
+function writeJobs(jobs) {
+    try {
+        fs.writeFileSync(dataPath, JSON.stringify(jobs, null, 2));
+    } catch (error) {
+        console.error('Error writing jobs:', error);
+    }
+}
+
+// GET all jobs
+router.get('/', (req, res) => {
+    try {
+        const jobs = readJobs();
+        res.status(200).json(jobs);
+    } catch (error) {
+        console.error('Error getting all jobs:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+// GET single job
+router.get('/:id', (req, res) => {
+    try {
+        const jobs = readJobs();
+        const jobId = parseInt(req.params.id);
+        const job = jobs.find(j => j.id === jobId);
+        
+        if (!job) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+        
+        res.status(200).json(job);
+    } catch (error) {
+        console.error('Error getting job:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// POST create new job
+router.post('/', (req, res) => {
+    try {
+        const jobs = readJobs();
+        
+        // Validate required fields
+        const { clientName, description, materials, estimatedCost, status, startDate } = req.body;
+        
+        if (!clientName || !description || !materials || estimatedCost === undefined || !status || !startDate) {
+            return res.status(400).json({ 
+                error: 'Missing required fields: clientName, description, materials, estimatedCost, status, startDate' 
+            });
+        }
+
+        // Generate new ID
+        const newId = jobs.length > 0 ? Math.max(...jobs.map(j => j.id)) + 1 : 1;
+        
+        const newJob = {
+            id: newId,
+            clientName: clientName,
+            description: description,
+            materials: Array.isArray(materials) ? materials : [materials],
+            estimatedCost: parseFloat(estimatedCost),
+            status: status,
+            startDate: startDate,
+            createdDate: new Date().toISOString().split('T')[0]
+        };
+        
+        jobs.push(newJob);
+        writeJobs(jobs);
+        
+        // Return the created job
+        res.status(201).json(newJob);
+    } catch (error) {
+        console.error('Error creating job:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// PUT update job
+router.put('/:id', (req, res) => {
+    try {
+        const jobs = readJobs();
+        const jobId = parseInt(req.params.id);
+        const jobIndex = jobs.findIndex(j => j.id === jobId);
+        
+        if (jobIndex === -1) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+        
+        // Update job with new data, keeping existing fields if not provided
+        const updatedJob = {
+            ...jobs[jobIndex],
+            ...req.body,
+            id: jobId, // Ensure ID doesn't change
+            updatedDate: new Date().toISOString().split('T')[0]
+        };
+        
+        jobs[jobIndex] = updatedJob;
+        writeJobs(jobs);
+        
+        res.status(200).json(updatedJob);
+    } catch (error) {
+        console.error('Error updating job:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// DELETE job
+router.delete('/:id', (req, res) => {
+    try {
+        const jobs = readJobs();
+        const jobId = parseInt(req.params.id);
+        const jobIndex = jobs.findIndex(j => j.id === jobId);
+        
+        if (jobIndex === -1) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+        
+        const deletedJob = jobs.splice(jobIndex, 1)[0];
+        writeJobs(jobs);
+        
+        res.status(200).json(deletedJob);
+    } catch (error) {
+        console.error('Error deleting job:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 module.exports = router;
