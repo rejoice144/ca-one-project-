@@ -32,7 +32,7 @@ Layer Technology
 Frontend HTML5, pure JavaScript
 Backend Node.js, Express.js (REST API)
 Storage Data JSON files (jobs.json, clients.json, materials.json)
-## Testing
+## Testing(chatgpt refered)
 Jest  unit tests
 
 API flows integration testing
