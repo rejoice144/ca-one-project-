@@ -21,9 +21,6 @@ Deleting of clients with outstanding jobs.
 ##Material Inventory
 Add/edit/delete materials that include their quantity, unit, cost per unit, supplier details.
 
-Avoid destruction of supplies used.
-
-Automatically-compute stock value.
 ##Dashboard
 Get a reading of total jobs, active jobs and total clients.
 
@@ -38,3 +35,22 @@ Jest  unit tests
 API flows integration testing
 
 Usability manual testing at realistic data level
+##refrence
+Official Documentation
+Express.js (2024) Express 4.x API reference. Available at:
+https://expressjs.com/en/4x/api.html .
+Mozilla Developer Network (2024) JavaScript reference. Available at:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript .
+Node.js Foundation (2024) Node.js v20.x documentation. Available at:
+https://nodejs.org/docs/latest-v20.x/api/ .
+OpenJS Foundation (2024) Jest testing framework. Available at:
+https://jestjs.io/docs/getting-started .
+Web Standards
+World Wide Web Consortium (2021) HTML living standard. Available at:
+https://html.spec.whatwg.org/ .
+World Wide Web Consortium (2023) CSS specifications. Available at:
+https://www.w3.org/Style/CSS/ .
+Development Tools
+GitHub, Inc. (2024) Git documentation. Available at: https://git-scm.com/doc .
+Microsoft Corporation (2024) Visual Studio Code documentation. Available at:
+https://code.visualstudio.com/docs.
