@@ -29,12 +29,7 @@ Layer Technology
 Frontend HTML5, pure JavaScript
 Backend Node.js, Express.js (REST API)
 Storage Data JSON files (jobs.json, clients.json, materials.json)
-## Testing(chatgpt refered)
-Jest  unit tests
 
-API flows integration testing
-
-Usability manual testing at realistic data level
 ##refrence
 Official Documentation
 Express.js (2024) Express 4.x API reference. Available at:
@@ -54,3 +49,5 @@ Development Tools
 GitHub, Inc. (2024) Git documentation. Available at: https://git-scm.com/doc .
 Microsoft Corporation (2024) Visual Studio Code documentation. Available at:
 https://code.visualstudio.com/docs.
+testing :(refered chatgpt)
+https://chatgpt.com/share/6884b883-9d68-8011-aeea-cc6769670c2b
